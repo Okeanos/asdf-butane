@@ -136,7 +136,7 @@ verify() {
 	gpg_temp=$(mktemp -d)
 
 	if ! (
-		gpg --homedir="${gpg_temp}" --import "fedora.gpg"
+		gpg --homedir="${gpg_temp}" --import "${download_path}/fedora.gpg"
 		gpg --homedir="${gpg_temp}" --verify "${download_path}/${signature_file}" "$ASDF_DOWNLOAD_PATH/${TOOL_NAME}"
 	); then
 		echo "signature verification failed" >&2
