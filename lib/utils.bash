@@ -2,10 +2,10 @@
 
 set -euo pipefail
 
-# TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for butane.
 GH_REPO="https://github.com/coreos/butane"
 TOOL_NAME="butane"
 TOOL_TEST="butane --version"
+SKIP_VERIFY=${ASDF_BUTANE_SKIP_VERIFY:-"false"}
 
 fail() {
 	echo -e "asdf-$TOOL_NAME: $*"
@@ -31,21 +31,57 @@ list_github_tags() {
 }
 
 list_all_versions() {
-	# TODO: Adapt this. By default we simply list the tag names from GitHub releases.
 	# Change this function if butane has other means of determining installable versions.
 	list_github_tags
+}
+
+get_platform() {
+	local -r kernel="$(uname -s)"
+	if [[ ${OSTYPE} == "msys" || ${kernel} == "CYGWIN"* || ${kernel} == "MINGW"* ]]; then
+		echo "pc-windows"
+	else
+		local -r unix="$(uname | tr '[:upper:]' '[:lower:]')"
+		if [[ ${unix} == "darwin" ]]; then
+			echo "apple-darwin"
+		else
+			echo "unknown-linux-gnu"
+		fi
+	fi
+}
+
+get_arch() {
+	local -r machine="$(uname -m)"
+
+	if [[ ${machine} == "arm64" ]] || [[ ${machine} == "aarch64" ]]; then
+		echo "aarch64"
+	elif [[ ${machine} == *"arm"* ]] || [[ ${machine} == *"aarch"* ]]; then
+		echo "aarch"
+	elif [[ ${machine} == *"386"* ]]; then
+		echo "x86"
+	else
+		echo "x86_64"
+	fi
+}
+
+get_release_file() {
+	echo "${ASDF_DOWNLOAD_PATH}/${TOOL_NAME}"
 }
 
 download_release() {
 	local version filename url
 	version="$1"
-	filename="$2"
+	local -r filename="$(get_release_file)"
+	local -r platform="$(get_platform)"
+	local -r arch="$(get_arch)"
 
-	# TODO: Adapt the release URL convention for butane
-	url="$GH_REPO/archive/v${version}.tar.gz"
+	url="$GH_REPO/releases/download/v${version}/${TOOL_NAME}-${arch}-${platform}"
+	if [[ ${platform} == "pc-windows" ]]; then
+		url+=".exe"
+	fi
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
+	chmod +x "$filename"
 }
 
 install_version() {
@@ -57,11 +93,17 @@ install_version() {
 		fail "asdf-$TOOL_NAME supports release installs only"
 	fi
 
+	if command -v gpg >/dev/null 2>&1 && [ "$SKIP_VERIFY" == "false" ]; then
+		echo "Verifying signatures and checksums"
+		verify "$version" "$ASDF_DOWNLOAD_PATH"
+	else
+		echo "Skipping verifying signatures and checksums either because gpg is not installed or explicitly skipped with ASDF_BUTANE_SKIP_VERIFY"
+	fi
+
 	(
 		mkdir -p "$install_path"
 		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
-		# TODO: Assert butane executable exists.
 		local tool_cmd
 		tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
 		test -x "$install_path/$tool_cmd" || fail "Expected $install_path/$tool_cmd to be executable."
@@ -71,4 +113,33 @@ install_version() {
 		rm -rf "$install_path"
 		fail "An error occurred while installing $TOOL_NAME $version."
 	)
+}
+
+verify() {
+	local -r version="$1"
+	local -r download_path="$2"
+	local -r signing_key_url="https://fedoraproject.org/fedora.gpg"
+	local -r platform="$(get_platform)"
+	local -r arch="$(get_arch)"
+	local -r signature_file="${TOOL_NAME}-${arch}-${platform}"
+	if [[ ${platform} == "pc-windows" ]]; then
+		signature_file+=".exe"
+	fi
+	signature_file+=".asc"
+
+	baseURL="$GH_REPO/releases/download/v${version}/${TOOL_NAME}-${arch}-${platform}"
+	echo "* Downloading signing key ..."
+	curl "${curl_opts[@]}" -o "${download_path}/fedora.gpg" "${signing_key_url}" || fail "Could not download ${signing_key_url}"
+	echo "* Downloading signature file ..."
+	curl "${curl_opts[@]}" -o "${download_path}/${signature_file}" "${baseURL}/${signature_file}" || fail "Could not download ${baseURL}/${signature_file}"
+
+	gpg_temp=$(mktemp -d)
+
+	if ! (
+		gpg --homedir="${gpg_temp}" --import "fedora.gpg"
+		gpg --homedir="${gpg_temp}" --verify "${download_path}/${signature_file}" "$ASDF_DOWNLOAD_PATH/${TOOL_NAME}"
+	); then
+		echo "signature verification failed" >&2
+		return 1
+	fi
 }
