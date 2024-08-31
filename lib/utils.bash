@@ -127,7 +127,7 @@ verify() {
 	fi
 	signature_file+=".asc"
 
-	baseURL="$GH_REPO/releases/download/v${version}/${TOOL_NAME}-${arch}-${platform}"
+	baseURL="$GH_REPO/releases/download/v${version}"
 	echo "* Downloading signing key ..."
 	curl "${curl_opts[@]}" -o "${download_path}/fedora.gpg" "${signing_key_url}" || fail "Could not download ${signing_key_url}"
 	echo "* Downloading signature file ..."
