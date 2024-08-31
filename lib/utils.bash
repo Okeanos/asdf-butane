@@ -121,7 +121,7 @@ verify() {
 	local -r signing_key_url="https://fedoraproject.org/fedora.gpg"
 	local -r platform="$(get_platform)"
 	local -r arch="$(get_arch)"
-	local -r signature_file="${TOOL_NAME}-${arch}-${platform}"
+	local signature_file="${TOOL_NAME}-${arch}-${platform}"
 	if [[ ${platform} == "pc-windows" ]]; then
 		signature_file+=".exe"
 	fi
