@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/Okeanos/asdf-butane/compare/v1.0.0...v1.0.1) (2024-09-17)
+
+
+### Bug Fixes
+
+* make renovate use semantic commits to no longer trip up the commit linter ([a61dd20](https://github.com/Okeanos/asdf-butane/commit/a61dd2022acc758985c334b121b43f1776499847))
+
 ## 1.0.0 (2024-08-31)
 
 
