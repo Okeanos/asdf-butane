@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/Okeanos/asdf-butane/compare/v1.0.1...v1.1.0) (2024-10-30)
+
+
+### Features
+
+* synchronize with Okeanos/template-repository ([78bd46f](https://github.com/Okeanos/asdf-butane/commit/78bd46fa3281200cff0503d233c95ab0fda3d7ad))
+
 ## [1.0.1](https://github.com/Okeanos/asdf-butane/compare/v1.0.0...v1.0.1) (2024-09-17)
 
 
