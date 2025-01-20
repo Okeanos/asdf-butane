@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/Okeanos/asdf-butane/compare/v1.1.0...v1.2.0) (2025-01-20)
+
+
+### Features
+
+* add script to automate sha256sum updates for mise defined tools ([cfc3630](https://github.com/Okeanos/asdf-butane/commit/cfc3630c35adbfc11b3b2bbf71bef26fd27e4cd8))
+
 ## [1.1.0](https://github.com/Okeanos/asdf-butane/compare/v1.0.1...v1.1.0) (2024-10-30)
 
 
