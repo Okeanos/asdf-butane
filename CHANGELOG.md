@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/Okeanos/asdf-butane/compare/v1.2.0...v1.2.1) (2025-12-05)
+
+
+### Bug Fixes
+
+* use correct URL for latest release download ([abf3fcd](https://github.com/Okeanos/asdf-butane/commit/abf3fcd7d8dcf69505182c053dd97e4c33416d65))
+* use correct URL for latest release download ([ee629b4](https://github.com/Okeanos/asdf-butane/commit/ee629b450319a0d01a0347f623190cc0e3451e50))
+
 ## [1.2.0](https://github.com/Okeanos/asdf-butane/compare/v1.1.0...v1.2.0) (2025-01-20)
 
 
