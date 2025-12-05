@@ -75,6 +75,9 @@ download_release() {
 	local -r arch="$(get_arch)"
 
 	url="$GH_REPO/releases/download/v${version}/${TOOL_NAME}-${arch}-${platform}"
+	if [[ ${version} == "latest" ]]; then
+		url="$GH_REPO/releases/${version}/download/${TOOL_NAME}-${arch}-${platform}"
+	fi
 	if [[ ${platform} == "pc-windows" ]]; then
 		url+=".exe"
 	fi
@@ -128,6 +131,9 @@ verify() {
 	signature_file+=".asc"
 
 	baseURL="$GH_REPO/releases/download/v${version}"
+	if [[ ${version} == "latest" ]]; then
+		baseURL="$GH_REPO/releases/${version}/download"
+	fi
 	echo "* Downloading signing key ..."
 	curl "${curl_opts[@]}" -o "${download_path}/fedora.gpg" "${signing_key_url}" || fail "Could not download ${signing_key_url}"
 	echo "* Downloading signature file ..."
