@@ -75,6 +75,9 @@ download_release() {
 	local -r arch="$(get_arch)"
 
 	url="$GH_REPO/releases/download/v${version}/${TOOL_NAME}-${arch}-${platform}"
+	if [[ ${version} == "latest" ]]; then
+		url="$GH_REPO/releases/${version}/download/${TOOL_NAME}-${arch}-${platform}"
+	fi
 	if [[ ${platform} == "pc-windows" ]]; then
 		url+=".exe"
 	fi
