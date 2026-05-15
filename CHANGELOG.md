@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/Okeanos/asdf-butane/compare/v1.2.1...v1.3.0) (2026-05-15)
+
+
+### Features
+
+* re-align with template-repository ([3d761e6](https://github.com/Okeanos/asdf-butane/commit/3d761e6160e112a7ed6b9ecfb22a7995bd36c916))
+
 ## [1.2.1](https://github.com/Okeanos/asdf-butane/compare/v1.2.0...v1.2.1) (2025-12-05)
 
 
